@@ -2,6 +2,8 @@
 
 A simple and interactive web application that leverages **LangChain** and **Flask** to answer user questions using **step-by-step reasoning** powered by a large language model like **Gemma 2 (via Groq)**.
 
+Try the app [Chain of Thought Reasoning App](https://chain-of-thought-reasoning.onrender.com)
+
 ![image](https://github.com/user-attachments/assets/1b1a50d2-7597-4a40-a16e-868f7348640a)
 
 
