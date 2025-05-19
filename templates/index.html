@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chain of Thought Reasoning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <h1 class="text-2xl font-bold text-center mb-4">Chain of Thought Reasoning</h1>
+
+        <!-- Form -->
+        <form id="question-form" class="mb-4">
+            <input type="text" id="question" name="question" placeholder="Enter your question..."
+                class="w-full p-2 border rounded mb-2" required>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit</button>
+        </form>
+
+        <!-- Loading animation -->
+        <div id="loading" class="hidden text-center text-gray-600 mb-4">
+            <div role="status" class="flex justify-center items-center gap-2">
+                <svg aria-hidden="true" class="w-6 h-6 text-gray-200 animate-spin fill-blue-500" viewBox="0 0 100 101"
+                    fill="none">
+                    <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10" class="opacity-25" />
+                    <path d="M50 15a35 35 0 1 1-24.748 59.748" fill="currentFill" />
+                </svg>
+                <span>Thinking...</span>
+            </div>
+        </div>
+
+        <!-- Answer & Reasoning -->
+        <div id="loading" class="hidden mt-4 text-gray-500 italic">Thinking...</div>
+
+        <div id="response-box" class="mt-6 hidden">
+            <button id="toggle-reasoning-btn" class="bg-blue-500 text-white px-3 py-1 rounded mb-2">Show
+                Reasoning</button>
+
+            <div id="reasoning-section" class="bg-gray-100 p-3 rounded mb-3 hidden">
+                <p id="reasoning-text" class="text-sm text-gray-700 whitespace-pre-wrap"></p>
+            </div>
+
+            <p class="font-bold text-lg">Answer:</p>
+            <p id="short-answer" class="text-black text-base mt-1"></p>
+        </div>
+
+
+    </div>
+
+    <script>
+        const form = document.getElementById('question-form');
+        const loading = document.getElementById('loading');
+        const responseBox = document.getElementById('response-box');
+        const shortAnswer = document.getElementById('short-answer');
+        const reasoningText = document.getElementById('reasoning-text');
+        const reasoningSection = document.getElementById('reasoning-section');
+        const toggleBtn = document.getElementById('toggle-reasoning-btn');
+
+        let reasoningVisible = false;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // UI Reset
+            loading.classList.remove('hidden');
+            responseBox.classList.add('hidden');
+            reasoningSection.classList.add('hidden');
+            toggleBtn.textContent = 'Show Reasoning';
+            reasoningVisible = false;
+
+            const question = document.getElementById('question').value;
+
+            try {
+                const res = await fetch('/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await res.json();
+                const raw = data.response;
+
+                // Remove markdown bold (**text**)
+                const cleanRaw = raw.replace(/\*\*(.*?)\*\*/g, '$1');
+
+                // Extract answer and reasoning
+                const answerMatch = cleanRaw.match(/Final Answer:\s*(.*)/i);
+                const reasoningMatch = cleanRaw.match(/Reasoning:\s*([\s\S]*)/i);
+
+                const answerOnly = answerMatch ? answerMatch[1].trim() : "No short answer found.";
+                const reasoning = reasoningMatch ? reasoningMatch[1].trim() : cleanRaw;
+
+                // Display result
+                loading.classList.add('hidden');
+                responseBox.classList.remove('hidden');
+                shortAnswer.textContent = answerOnly;
+                reasoningText.textContent = reasoning;
+
+            } catch (err) {
+                loading.classList.add('hidden');
+                responseBox.classList.remove('hidden');
+                shortAnswer.textContent = "Error fetching response.";
+                console.error("❌ Error:", err);
+            }
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            reasoningVisible = !reasoningVisible;
+            if (reasoningVisible) {
+                reasoningSection.classList.remove('hidden');
+                toggleBtn.textContent = 'Hide Reasoning';
+            } else {
+                reasoningSection.classList.add('hidden');
+                toggleBtn.textContent = 'Show Reasoning';
+            }
+        });
+    </script>
+</body>
+
+</html>
