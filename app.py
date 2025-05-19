@@ -10,7 +10,11 @@ app = Flask(__name__)
 # Environment Setup
 load_dotenv() 
 
-os.environ["OPENAI_API_KEY"] = os.environ["GROQ_API_KEY"]
+groq_api_key = os.getenv("GROQ_API_KEY")
+if not groq_api_key:
+    raise EnvironmentError("GROQ_API_KEY not set in environment variables.")
+os.environ["OPENAI_API_KEY"] = groq_api_key
+
 os.environ["OPENAI_API_BASE"] = "https://api.groq.com/openai/v1"
 
 # LangChain setup
@@ -39,13 +43,20 @@ def index():
 
 @app.route('/ask', methods=['POST'])
 def ask():
-    data = request.get_json()
-    question = data.get('question', '')
-    if not question:
-        return jsonify({'response': 'No question provided.'})
+    try:
+        data = request.get_json()
+        question = data.get('question', '')
+        if not question:
+            return jsonify({'response': 'No question provided.'}), 400
 
-    response = chain.run(question)
-    return jsonify({'response': response})
+        response = chain.run(question)
+        return jsonify({'response': response})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    except Exception as e:
+        return jsonify({'response': f'Error: {str(e)}'}), 500
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
+
