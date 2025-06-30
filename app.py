@@ -90,8 +90,109 @@ SAMPLE_QUESTIONS = [
         "question": "In a class of 30 students, 18 like pizza, 12 like burgers, and 6 like both. How many students like neither pizza nor burgers?",
         "category": "Logic - Set Theory",
         "icon": "🧮"
+    },
+    {
+        "question": "If 7 pencils cost $3.50, how much does 1 pencil cost?",
+        "category": "Math - Unit Price",
+        "icon": "✏️"
+    },
+    {
+        "question": "A bus travels 120 km at a speed of 40 km/h. How long does it take?",
+        "category": "Math - Speed & Time",
+        "icon": "🚌"
+    },
+    {
+        "question": "Lisa has twice as many stickers as Jack. Together they have 30. How many does each have?",
+        "category": "Math - Word Problem",
+        "icon": "🎟️"
+    },
+    {
+        "question": "A rectangle’s length is 3 m more than its width. Its area is 70 m². Find its dimensions.",
+        "category": "Math - Geometry",
+        "icon": "📐"
+    },
+    {
+        "question": "Emily saves $20 every week. How many weeks will it take her to save $600?",
+        "category": "Math - Saving & Budgeting",
+        "icon": "💰"
+    },
+    {
+        "question": "Which of these is a quality assurance activity: verifying processes or inspecting final products?",
+        "category": "CSQA - Concepts",
+        "icon": "✅"
+    },
+    {
+        "question": "Interoperability in software testing refers to: (A) ease of integration (B) user satisfaction (C) speed?",
+        "category": "CSQA - Definitions",
+        "icon": "🧩"
+    },
+    {
+        "question": "If a person is born in 2000, can they celebrate their 21st birthday in 2021?",
+        "category": "Logic - Reasoning",
+        "icon": "🎂"
+    },
+    {
+        "question": "Can a square have four acute angles?",
+        "category": "Math - Geometry Logic",
+        "icon": "🔷"
+    },
+    {
+        "question": "If January 1, 2025 is a Wednesday, what day is March 1, 2025?",
+        "category": "Date Understanding",
+        "icon": "📅"
+    },
+    {
+        "question": "How many Sundays were there in February 2024?",
+        "category": "Date Understanding",
+        "icon": "📆"
+    },
+    {
+        "question": "A cricket bowler concedes 48 runs in 8 overs. What is their economy rate?",
+        "category": "Sports - Cricket",
+        "icon": "🏏"
+    },
+    {
+        "question": "A basketball team won 18 out of 30 games. What is their win percentage?",
+        "category": "Sports - Basketball",
+        "icon": "🏀"
+    },
+    {
+        "question": "A train departs at 3:15 PM and arrives at 5:45 PM. How long is the journey?",
+        "category": "Math - Time Calculation",
+        "icon": "⏱️"
+    },
+    {
+        "question": "A shirt costs $40 and is discounted by 25%. What is the sale price?",
+        "category": "Math - Discount",
+        "icon": "👕"
+    },
+    {
+        "question": "You roll a 6-sided die. What’s the probability of rolling an even number?",
+        "category": "Math - Probability",
+        "icon": "🎲"
+    },
+    {
+        "question": "There are 12 marbles: 4 red, 5 blue, 3 green. What fraction are not blue?",
+        "category": "Math - Fractions",
+        "icon": "⚪"
+    },
+    {
+        "question": "Which costs more: 3 pens at $2.50 each or 4 notebooks at $1.80 each?",
+        "category": "Math - Cost Comparison",
+        "icon": "📚"
+    },
+    {
+        "question": "You’re driving 180 miles at 60 mph. How long will it take?",
+        "category": "Math - Distance & Time",
+        "icon": "🚗"
+    },
+    {
+        "question": "An exam has 40 questions. You answer 32 correctly. What’s your score percentage?",
+        "category": "Math - Percentage",
+        "icon": "📝"
     }
 ]
+
 
 def parse_cot_response(response):
     """Parse CoT response to extract reasoning and final answer"""
