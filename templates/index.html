@@ -6,118 +6,663 @@
     <title>Chain of Thought Reasoning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
-        <h1 class="text-2xl font-bold text-center mb-4">Chain of Thought Reasoning</h1>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="text-center">
+                <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    🧠 Chain of Thought Reasoning
+                </h1>
+                <p class="text-gray-600 text-sm md:text-base mt-1">Discover the power of step-by-step thinking</p>
+            </div>
+        </div>
+    </header>
 
-        <!-- Form -->
-        <form id="question-form" class="mb-4 space-y-4">
-            <input type="text" id="question" name="question" class="w-full p-3 border rounded mb-3 text-base"
-                placeholder="Enter your question..." required>
-            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-3 rounded hover:bg-blue-600 text-base">Submit</button>
-        </form>
-
-        <!-- Loading animation -->
-        <div id="loading" class="hidden text-center text-gray-600 mb-4">
-            <div role="status" class="flex justify-center items-center gap-2">
-                <svg aria-hidden="true" class="w-6 h-6 text-gray-200 animate-spin fill-blue-500" viewBox="0 0 100 101"
-                    fill="none">
-                    <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10" class="opacity-25" />
-                    <path d="M50 15a35 35 0 1 1-24.748 59.748" fill="currentFill" />
-                </svg>
-                <span>Thinking...</span>
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <!-- Mode Selection Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <span class="mr-2">⚙️</span> Choose Your Mode
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label class="mode-option group cursor-pointer" data-mode="cot">
+                    <input type="radio" name="mode" value="cot" checked class="sr-only">
+                    <div class="mode-card bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-4 transition-all duration-300 group-hover:shadow-md">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">🧠</div>
+                            <div class="font-semibold text-blue-700">Chain of Thought</div>
+                            <div class="text-xs text-blue-600 mt-1">Step-by-step reasoning</div>
+                        </div>
+                    </div>
+                </label>
+                
+                <label class="mode-option group cursor-pointer" data-mode="direct">
+                    <input type="radio" name="mode" value="direct" class="sr-only">
+                    <div class="mode-card bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-4 transition-all duration-300 group-hover:shadow-md">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">⚡</div>
+                            <div class="font-semibold text-gray-700">Direct Answer</div>
+                            <div class="text-xs text-gray-600 mt-1">Quick response</div>
+                        </div>
+                    </div>
+                </label>
+                
+                <label class="mode-option group cursor-pointer" data-mode="compare">
+                    <input type="radio" name="mode" value="compare" class="sr-only">
+                    <div class="mode-card bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl p-4 transition-all duration-300 group-hover:shadow-md">
+                        <div class="text-center">
+                            <div class="text-2xl mb-2">📊</div>
+                            <div class="font-semibold text-purple-700">Compare Both</div>
+                            <div class="text-xs text-purple-600 mt-1">Side-by-side analysis</div>
+                        </div>
+                    </div>
+                </label>
             </div>
         </div>
 
-        <!-- Answer & Reasoning -->
-        <div id="loading" class="hidden mt-4 text-gray-500 italic">Thinking...</div>
-
-        <div id="response-box" class="mt-6 hidden">
-            <button id="toggle-reasoning-btn" class="bg-blue-500 text-white px-3 py-1 rounded mb-2">Show
-                Reasoning</button>
-
-            <div id="reasoning-section" class="bg-gray-100 p-3 rounded mb-3 hidden">
-                <p id="reasoning-text" class="text-sm text-gray-700 whitespace-pre-wrap"></p>
+        <!-- Sample Questions -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <span class="mr-2">💡</span> Try These Examples
+                </h2>
+                <button id="refresh-samples" class="text-blue-600 hover:text-blue-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
             </div>
-
-            <p class="font-bold text-lg">Answer:</p>
-            <p id="short-answer" class="text-black text-base mt-1"></p>
+            <div id="sample-questions" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Sample questions will be loaded here -->
+            </div>
         </div>
 
+        <!-- Question Input -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 animate-fade-in">
+            <form id="question-form" class="space-y-4">
+                <div>
+                    <label for="question" class="block text-sm font-semibold text-gray-700 mb-2">
+                        🤔 What would you like to explore?
+                    </label>
+                    <div class="relative">
+                        <textarea id="question" name="question" rows="3" 
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 resize-none transition-colors"
+                            placeholder="Enter your question or problem here..."
+                            required></textarea>
+                        <div class="absolute bottom-3 right-3 text-xs text-gray-400">
+                            <span id="char-count">0</span>/500
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" id="submit-btn" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-300">
+                    <span id="submit-text">🚀 Analyze Question</span>
+                </button>
+            </form>
+        </div>
 
+        <!-- Loading State -->
+        <div id="loading" class="hidden bg-white rounded-2xl shadow-lg p-8 animate-slide-up">
+            <div class="text-center">
+                <div class="inline-flex items-center space-x-3">
+                    <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    <span class="text-lg font-medium text-gray-700" id="loading-text">Thinking deeply...</span>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <span id="processing-hint">Using advanced reasoning to solve your problem</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Response -->
+        <div id="single-response" class="hidden space-y-6">
+            <!-- Response Header -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <span id="response-icon">🧠</span>
+                        <span id="response-title" class="ml-2">Response</span>
+                    </h3>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span id="response-stats"></span>
+                        <button id="copy-response" class="text-blue-600 hover:text-blue-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reasoning Section (for CoT) -->
+                <div id="reasoning-container" class="hidden">
+                    <div class="mb-4">
+                        <button id="toggle-reasoning" class="flex items-center justify-between w-full p-4 bg-blue-50 rounded-xl text-blue-700 font-medium hover:bg-blue-100 transition-colors">
+                            <span class="flex items-center">
+                                <span class="mr-2">🔍</span> Step-by-Step Reasoning
+                            </span>
+                            <svg id="reasoning-arrow" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div id="reasoning-content" class="hidden bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                        <div class="prose prose-sm max-w-none">
+                            <pre id="reasoning-text" class="whitespace-pre-wrap text-gray-700 leading-relaxed font-sans"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Answer -->
+                <div class="mt-6">
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                        <h4 class="font-bold text-green-800 mb-3 flex items-center">
+                            <span class="mr-2">✅</span> Final Answer
+                        </h4>
+                        <div id="final-answer" class="text-gray-800 text-lg leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Response -->
+        <div id="comparison-response" class="hidden space-y-6">
+            <!-- Comparison Stats -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <span class="mr-2">📊</span> Performance Comparison
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-blue-50 rounded-xl p-4">
+                        <div class="text-blue-700 font-semibold mb-2">🧠 Chain of Thought</div>
+                        <div id="cot-stats" class="text-sm text-blue-600"></div>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="text-gray-700 font-semibold mb-2">⚡ Direct Answer</div>
+                        <div id="direct-stats" class="text-sm text-gray-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side-by-side Responses -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- CoT Response -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up">
+                    <h4 class="text-lg font-bold text-blue-700 mb-4 flex items-center">
+                        <span class="mr-2">🧠</span> Chain of Thought
+                    </h4>
+                    
+                    <!-- CoT Reasoning Toggle -->
+                    <div class="mb-4">
+                        <button id="toggle-cot-reasoning" class="flex items-center justify-between w-full p-3 bg-blue-50 rounded-lg text-blue-700 font-medium hover:bg-blue-100 transition-colors">
+                            <span class="text-sm">🔍 View Reasoning Process</span>
+                            <svg id="cot-reasoning-arrow" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div id="cot-reasoning-content" class="hidden bg-blue-50 rounded-lg p-4 mb-4">
+                        <pre id="cot-reasoning-text" class="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed font-sans"></pre>
+                    </div>
+                    
+                    <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                        <div class="font-semibold text-green-800 mb-2">Final Answer:</div>
+                        <div id="cot-final-answer" class="text-gray-800"></div>
+                    </div>
+                </div>
+
+                <!-- Direct Response -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up">
+                    <h4 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+                        <span class="mr-2">⚡</span> Direct Answer
+                    </h4>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 h-full">
+                        <div class="font-semibold text-gray-800 mb-2">Answer:</div>
+                        <div id="direct-final-answer" class="text-gray-800"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Insights -->
+            <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl shadow-lg p-6 border border-yellow-200 animate-slide-up">
+                <h4 class="text-lg font-bold text-orange-800 mb-4 flex items-center">
+                    <span class="mr-2">💡</span> Key Insights
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="space-y-2">
+                        <div class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-1">•</span>
+                            <span class="text-orange-700"><strong>Transparency:</strong> CoT reveals the thinking process</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-1">•</span>
+                            <span class="text-orange-700"><strong>Reliability:</strong> Step-by-step verification reduces errors</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-1">•</span>
+                            <span class="text-orange-700"><strong>Learning:</strong> Understand the methodology</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-orange-500 mr-2 mt-1">•</span>
+                            <span class="text-orange-700"><strong>Debugging:</strong> Identify where mistakes occur</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300 z-50">
+        <span id="toast-message">Copied to clipboard!</span>
     </div>
 
     <script>
+        // Global variables
+        let currentMode = 'cot';
+        let sampleQuestions = [];
+
+        // DOM elements
         const form = document.getElementById('question-form');
+        const questionInput = document.getElementById('question');
+        const charCount = document.getElementById('char-count');
+        const submitBtn = document.getElementById('submit-btn');
+        const submitText = document.getElementById('submit-text');
         const loading = document.getElementById('loading');
-        const responseBox = document.getElementById('response-box');
-        const shortAnswer = document.getElementById('short-answer');
-        const reasoningText = document.getElementById('reasoning-text');
-        const reasoningSection = document.getElementById('reasoning-section');
-        const toggleBtn = document.getElementById('toggle-reasoning-btn');
+        const loadingText = document.getElementById('loading-text');
+        const processingHint = document.getElementById('processing-hint');
+        const singleResponse = document.getElementById('single-response');
+        const comparisonResponse = document.getElementById('comparison-response');
 
-        let reasoningVisible = false;
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupModeSelection();
+            setupCharacterCounter();
+            setupToggles();
+            setupFormSubmission();
+            setupCopyButtons();
+            loadSampleQuestions();
+        });
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Mode selection
+        function setupModeSelection() {
+            const modeOptions = document.querySelectorAll('.mode-option');
+            modeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const mode = this.dataset.mode;
+                    currentMode = mode;
+                    
+                    // Update radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Update visual selection
+                    modeOptions.forEach(opt => {
+                        const card = opt.querySelector('.mode-card');
+                        card.classList.remove('ring-2', 'ring-blue-500', 'ring-purple-500', 'ring-gray-500');
+                    });
+                    
+                    const selectedCard = this.querySelector('.mode-card');
+                    if (mode === 'cot') {
+                        selectedCard.classList.add('ring-2', 'ring-blue-500');
+                    } else if (mode === 'compare') {
+                        selectedCard.classList.add('ring-2', 'ring-purple-500');
+                    } else {
+                        selectedCard.classList.add('ring-2', 'ring-gray-500');
+                    }
+                    
+                    // Update submit button
+                    updateSubmitButton(mode);
+                });
+            });
+            
+            // Set initial selection
+            document.querySelector('.mode-option[data-mode="cot"]').click();
+        }
 
-            // UI Reset
-            loading.classList.remove('hidden');
-            responseBox.classList.add('hidden');
-            reasoningSection.classList.add('hidden');
-            toggleBtn.textContent = 'Show Reasoning';
-            reasoningVisible = false;
+        function updateSubmitButton(mode) {
+            const texts = {
+                'cot': '🧠 Analyze with CoT',
+                'direct': '⚡ Get Direct Answer',
+                'compare': '📊 Compare Both Methods'
+            };
+            
+            const hints = {
+                'cot': 'Generating step-by-step reasoning...',
+                'direct': 'Getting quick answer...',
+                'compare': 'Running both methods for comparison...'
+            };
+            
+            submitText.textContent = texts[mode];
+            processingHint.textContent = hints[mode];
+        }
 
-            const question = document.getElementById('question').value;
+        // Character counter
+        function setupCharacterCounter() {
+            questionInput.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count;
+                
+                if (count > 450) {
+                    charCount.className = 'text-red-500';
+                } else if (count > 350) {
+                    charCount.className = 'text-yellow-500';
+                } else {
+                    charCount.className = 'text-gray-400';
+                }
+            });
+        }
 
+        // Toggle functionality
+        function setupToggles() {
+            // Single response reasoning toggle
+            const toggleReasoning = document.getElementById('toggle-reasoning');
+            if (toggleReasoning) {
+                toggleReasoning.addEventListener('click', function() {
+                    const content = document.getElementById('reasoning-content');
+                    const arrow = document.getElementById('reasoning-arrow');
+                    
+                    content.classList.toggle('hidden');
+                    arrow.classList.toggle('rotate-180');
+                });
+            }
+
+            // Comparison CoT reasoning toggle
+            const toggleCotReasoning = document.getElementById('toggle-cot-reasoning');
+            if (toggleCotReasoning) {
+                toggleCotReasoning.addEventListener('click', function() {
+                    const content = document.getElementById('cot-reasoning-content');
+                    const arrow = document.getElementById('cot-reasoning-arrow');
+                    
+                    content.classList.toggle('hidden');
+                    arrow.classList.toggle('rotate-180');
+                });
+            }
+        }
+
+        // Form submission
+        function setupFormSubmission() {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const question = questionInput.value.trim();
+                if (!question) return;
+
+                // Show loading
+                showLoading();
+                hideResponses();
+
+                try {
+                    if (currentMode === 'compare') {
+                        await handleCompareMode(question);
+                    } else {
+                        await handleSingleMode(question, currentMode);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError('An error occurred while processing your question. Please try again.');
+                } finally {
+                    hideLoading();
+                }
+            });
+        }
+
+        async function handleSingleMode(question, mode) {
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question,
+                    mode: mode
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            displaySingleResponse(data, mode);
+        }
+
+        async function handleCompareMode(question) {
+            const response = await fetch('/compare', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            displayComparisonResponse(data);
+        }
+
+        function displaySingleResponse(data, mode) {
+            const responseIcon = document.getElementById('response-icon');
+            const responseTitle = document.getElementById('response-title');
+            const responseStats = document.getElementById('response-stats');
+            const reasoningContainer = document.getElementById('reasoning-container');
+            const reasoningText = document.getElementById('reasoning-text');
+            const finalAnswer = document.getElementById('final-answer');
+
+            // Update header
+            if (mode === 'cot') {
+                responseIcon.textContent = '🧠';
+                responseTitle.textContent = 'Chain of Thought Response';
+                reasoningContainer.classList.remove('hidden');
+                reasoningText.textContent = data.reasoning || 'No reasoning provided';
+                finalAnswer.textContent = data.final_answer || data.response;
+            } else {
+                responseIcon.textContent = '⚡';
+                responseTitle.textContent = 'Direct Answer';
+                reasoningContainer.classList.add('hidden');
+                finalAnswer.textContent = data.response;
+            }
+
+            responseStats.textContent = `${data.word_count} words • ${data.processing_time}s`;
+            
+            singleResponse.classList.remove('hidden');
+        }
+
+        function displayComparisonResponse(data) {
+            // Update stats
+            document.getElementById('cot-stats').innerHTML = `
+                <div>Words: ${data.cot.word_count}</div>
+                <div>Time: ${data.cot.processing_time}s</div>
+            `;
+            
+            document.getElementById('direct-stats').innerHTML = `
+                <div>Words: ${data.direct.word_count}</div>
+                <div>Time: ${data.direct.processing_time}s</div>
+            `;
+
+            // Update CoT response
+            document.getElementById('cot-reasoning-text').textContent = data.cot.reasoning || data.cot.response;
+            document.getElementById('cot-final-answer').textContent = data.cot.final_answer || data.cot.response;
+
+            // Update direct response
+            document.getElementById('direct-final-answer').textContent = data.direct.response;
+
+            comparisonResponse.classList.remove('hidden');
+        }
+
+        // Copy functionality
+        function setupCopyButtons() {
+            document.getElementById('copy-response').addEventListener('click', function() {
+                const finalAnswer = document.getElementById('final-answer').textContent;
+                copyToClipboard(finalAnswer);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                showToast('Copied to clipboard!');
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy', 'error');
+            });
+        }
+
+        // Load sample questions
+        async function loadSampleQuestions() {
             try {
-                const res = await fetch('/ask', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question })
+                const response = await fetch('/get-samples');
+                const data = await response.json();
+                sampleQuestions = data.samples || [];
+                displaySampleQuestions();
+            } catch (error) {
+                console.error('Error loading sample questions:', error);
+                // Fallback to default questions
+                sampleQuestions = [
+                    {
+                        question: "If a train travels 60 mph for 2.5 hours, how far does it go?",
+                        category: "Math - Distance",
+                        icon: "🚂"
+                    },
+                    {
+                        question: "A restaurant bill is $48. If you want to leave an 18% tip, what's the total amount you'll pay?",
+                        category: "Math - Percentage",
+                        icon: "🍽️"
+                    }
+                ];
+                displaySampleQuestions();
+            }
+        }
+
+        function displaySampleQuestions() {
+            const container = document.getElementById('sample-questions');
+            container.innerHTML = '';
+
+            // Show random 4 questions
+            const shuffled = [...sampleQuestions].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 4);
+
+            selected.forEach(sample => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 cursor-pointer hover:shadow-md transition-all duration-300 group border border-gray-200';
+                questionCard.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="text-2xl">${sample.icon}</div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+                                ${sample.question}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">${sample.category}</div>
+                        </div>
+                    </div>
+                `;
+                
+                questionCard.addEventListener('click', function() {
+                    questionInput.value = sample.question;
+                    questionInput.dispatchEvent(new Event('input'));
+                    questionInput.focus();
                 });
 
-                const data = await res.json();
-                const raw = data.response;
+                container.appendChild(questionCard);
+            });
+        }
 
-                // Remove markdown bold (**text**)
-                const cleanRaw = raw.replace(/\*\*(.*?)\*\*/g, '$1');
-
-                // Extract answer and reasoning
-                const answerMatch = cleanRaw.match(/Final Answer:\s*(.*)/i);
-                const reasoningMatch = cleanRaw.match(/Reasoning:\s*([\s\S]*)/i);
-
-                const answerOnly = answerMatch ? answerMatch[1].trim() : "No short answer found.";
-                const reasoning = reasoningMatch ? reasoningMatch[1].trim() : cleanRaw;
-
-                // Display result
-                loading.classList.add('hidden');
-                responseBox.classList.remove('hidden');
-                shortAnswer.textContent = answerOnly;
-                reasoningText.textContent = reasoning;
-
-            } catch (err) {
-                loading.classList.add('hidden');
-                responseBox.classList.remove('hidden');
-                shortAnswer.textContent = "Error fetching response.";
-                console.error("❌ Error:", err);
-            }
+        // Refresh samples
+        document.getElementById('refresh-samples').addEventListener('click', function() {
+            displaySampleQuestions();
         });
 
-        toggleBtn.addEventListener('click', () => {
-            reasoningVisible = !reasoningVisible;
-            if (reasoningVisible) {
-                reasoningSection.classList.remove('hidden');
-                toggleBtn.textContent = 'Hide Reasoning';
-            } else {
-                reasoningSection.classList.add('hidden');
-                toggleBtn.textContent = 'Show Reasoning';
-            }
-        });
-    </script>
+        // Utility functions
+        function showLoading() {
+            loading.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function hideLoading() {
+            loading.classList.add('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function hideResponses() {
+            singleResponse.classList.add('hidden');
+            comparisonResponse.classList.add('hidden');
+        }
+
+        function showError(message) {
+            hideLoading();
+            hideResponses();
+            showToast(message, 'error');
+        }
+
+        function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        toastMessage.textContent = message;
+
+        if (type === 'error') {
+            toast.classList.remove('bg-green-600');
+            toast.classList.add('bg-red-600');
+        } else {
+            toast.classList.remove('bg-red-600');
+            toast.classList.add('bg-green-600');
+        }
+
+        toast.classList.remove('translate-y-full');
+        toast.classList.add('translate-y-0');
+
+        setTimeout(() => {
+            toast.classList.remove('translate-y-0');
+            toast.classList.add('translate-y-full');
+        }, 3000);
+    }
+</script>
 </body>
-
 </html>
