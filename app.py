@@ -59,137 +59,135 @@ Answer:
 cot_chain = LLMChain(llm=llm, prompt=cot_prompt)
 direct_chain = LLMChain(llm=llm, prompt=direct_prompt)
 
+# cot_chain = llm | cot_prompt
+# direct_chain = llm | direct_prompt
+
 # Sample questions that showcase CoT benefits
 SAMPLE_QUESTIONS = [
     {
-        "question": "If a train travels 60 mph for 2.5 hours, how far does it go?",
-        "category": "Math - Distance",
-        "icon": "🚂"
+        "question": "If a plane crashes on the border of two countries, where do they bury the survivors?",
+        "category": "Commonsense - Reasoning",
+        "icon": "✈️"
     },
     {
-        "question": "A restaurant bill is $48. If you want to leave an 18% tip, what's the total amount you'll pay?",
-        "category": "Math - Percentage",
-        "icon": "🍽️"
+        "question": "A man has 3 hats: red, blue, and green. He randomly picks one each day. If he wears the red hat on Monday, what is the chance he wears it again on Wednesday?",
+        "category": "Commonsense - Probability",
+        "icon": "🧢"
     },
     {
-        "question": "Sarah has twice as many apples as Tom. Tom has 8 apples. How many apples do they have together?",
-        "category": "Math - Word Problem",
-        "icon": "🍎"
+        "question": "If you’re running a race and overtake the person in second place, what position are you in now?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "🏃"
     },
     {
-        "question": "If I have 3 red balls, 5 blue balls, and 2 green balls in a bag, what fraction of the balls are blue?",
-        "category": "Math - Fractions",
-        "icon": "🔵"
+        "question": "A candle burns down completely in 6 hours. How long will it take for 3 candles to burn down if they are lit at the same time?",
+        "category": "Commonsense - Reasoning",
+        "icon": "🕯️"
     },
     {
-        "question": "A parking meter accepts quarters ($0.25) and gives 15 minutes per quarter. If I want to park for 2 hours, how much money do I need?",
-        "category": "Math - Time & Money",
-        "icon": "🅿️"
+        "question": "A farmer needs to cross a river with a wolf, a goat, and a cabbage. He can only take one at a time in his boat. How can he get all three across without the wolf eating the goat or the goat eating the cabbage?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "🚣"
     },
     {
-        "question": "In a class of 30 students, 18 like pizza, 12 like burgers, and 6 like both. How many students like neither pizza nor burgers?",
-        "category": "Logic - Set Theory",
-        "icon": "🧮"
+        "question": "A clock is ticking backward and shows 4:00 PM now. What time will it show in 5 hours?",
+        "category": "Commonsense - Time Reasoning",
+        "icon": "⏰"
     },
     {
-        "question": "If 7 pencils cost $3.50, how much does 1 pencil cost?",
-        "category": "Math - Unit Price",
-        "icon": "✏️"
+        "question": "If all roses are flowers and some flowers are red, must some roses be red?",
+        "category": "Commonsense - Logical Reasoning",
+        "icon": "🌹"
     },
     {
-        "question": "A bus travels 120 km at a speed of 40 km/h. How long does it take?",
-        "category": "Math - Speed & Time",
-        "icon": "🚌"
+        "question": "A person says, 'I am lying right now.' Is this statement true or false?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "🧠"
     },
     {
-        "question": "Lisa has twice as many stickers as Jack. Together they have 30. How many does each have?",
-        "category": "Math - Word Problem",
-        "icon": "🎟️"
+        "question": "You have a cake and want to cut it into exactly 8 equal pieces using only 3 straight cuts. Is this possible, and if so, how?",
+        "category": "Commonsense - Spatial Reasoning",
+        "icon": "🍰"
     },
     {
-        "question": "A rectangle’s length is 3 m more than its width. Its area is 70 m². Find its dimensions.",
-        "category": "Math - Geometry",
-        "icon": "📐"
+        "question": "If a frog climbs a 10-meter well, rising 3 meters each day but slipping back 2 meters each night, how many days does it take to reach the top?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "🐸"
     },
     {
-        "question": "Emily saves $20 every week. How many weeks will it take her to save $600?",
-        "category": "Math - Saving & Budgeting",
-        "icon": "💰"
+        "question": "If a town’s population doubles every 10 years and is 8,000 now, what was it 15 years ago?",
+        "category": "Commonsense - Arithmetic Reasoning",
+        "icon": "🏘️"
     },
     {
-        "question": "Which of these is a quality assurance activity: verifying processes or inspecting final products?",
-        "category": "CSQA - Concepts",
-        "icon": "✅"
+        "question": "A light bulb is on for 10 minutes, off for 5 minutes, then on for 10 minutes again. How long does this cycle take to complete?",
+        "category": "Commonsense - Time Reasoning",
+        "icon": "💡"
     },
     {
-        "question": "Interoperability in software testing refers to: (A) ease of integration (B) user satisfaction (C) speed?",
-        "category": "CSQA - Definitions",
-        "icon": "🧩"
+        "question": "If a ladder is leaning against a wall and slides down without moving its base, does the top of the ladder get closer to or farther from the wall?",
+        "category": "Commonsense - Spatial Reasoning",
+        "icon": "🪜"
     },
     {
-        "question": "If a person is born in 2000, can they celebrate their 21st birthday in 2021?",
-        "category": "Logic - Reasoning",
-        "icon": "🎂"
+        "question": "A man walks 3 miles south, 3 miles east, and 3 miles north, ending up at his starting point. Where could he be standing?",
+        "category": "Commonsense - Spatial Reasoning",
+        "icon": "🌍"
     },
     {
-        "question": "Can a square have four acute angles?",
-        "category": "Math - Geometry Logic",
-        "icon": "🔷"
+        "question": "If you have 4 identical boxes and 10 identical coins, can you place all coins in the boxes so each box has a different number of coins?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "📦"
     },
     {
-        "question": "If January 1, 2025 is a Wednesday, what day is March 1, 2025?",
-        "category": "Date Understanding",
-        "icon": "📅"
+        "question": "A woman buys a turkey that weighs 16 pounds. After cooking, it loses 20% of its weight, and she serves 1/4 of the cooked turkey. How much turkey is left?",
+        "category": "Commonsense - Arithmetic Reasoning",
+        "icon": "🦃"
     },
     {
-        "question": "How many Sundays were there in February 2024?",
-        "category": "Date Understanding",
-        "icon": "📆"
+        "question": "If a train leaves at 8:00 AM traveling 50 mph and another leaves at 9:00 AM traveling 70 mph in the same direction, when will they meet?",
+        "category": "Commonsense - Relative Speed",
+        "icon": "🚄"
     },
     {
-        "question": "A cricket bowler concedes 48 runs in 8 overs. What is their economy rate?",
-        "category": "Sports - Cricket",
-        "icon": "🏏"
+        "question": "You have 3 switches controlling 3 lights, but you can’t see the lights from the switches. How can you determine which switch controls which light with only one trip to the lights?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "💡"
     },
     {
-        "question": "A basketball team won 18 out of 30 games. What is their win percentage?",
-        "category": "Sports - Basketball",
-        "icon": "🏀"
+        "question": "If a rope is cut into 3 pieces, with the second piece 1 meter longer than the first, and the third piece twice as long as the first, and the total length is 14 meters, how long is each piece?",
+        "category": "Commonsense - Arithmetic Reasoning",
+        "icon": "🪢"
     },
     {
-        "question": "A train departs at 3:15 PM and arrives at 5:45 PM. How long is the journey?",
-        "category": "Math - Time Calculation",
-        "icon": "⏱️"
+        "question": "A clock strikes once at 1:00, twice at 2:00, and so on up to twelve times at 12:00. How many times does it strike from 1:00 AM to 12:00 PM, inclusive?",
+        "category": "Commonsense - Arithmetic Reasoning",
+        "icon": "🕰️"
     },
     {
-        "question": "A shirt costs $40 and is discounted by 25%. What is the sale price?",
-        "category": "Math - Discount",
-        "icon": "👕"
+        "question": "If you’re in a room with 3 doors—one leads to freedom, one to a lion, and one to a dead end where you return to try again—how many doors do you expect to try before finding freedom?",
+        "category": "Commonsense - Probability",
+        "icon": "🚪"
     },
     {
-        "question": "You roll a 6-sided die. What’s the probability of rolling an even number?",
-        "category": "Math - Probability",
-        "icon": "🎲"
+        "question": "A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost?",
+        "category": "Commonsense - Arithmetic Reasoning",
+        "icon": "⚾"
     },
     {
-        "question": "There are 12 marbles: 4 red, 5 blue, 3 green. What fraction are not blue?",
-        "category": "Math - Fractions",
-        "icon": "⚪"
-    },
-    {
-        "question": "Which costs more: 3 pens at $2.50 each or 4 notebooks at $1.80 each?",
-        "category": "Math - Cost Comparison",
-        "icon": "📚"
-    },
-    {
-        "question": "You’re driving 180 miles at 60 mph. How long will it take?",
-        "category": "Math - Distance & Time",
+        "question": "If a car’s odometer reads 999 miles and you drive 2 more miles, what will the odometer read, assuming it has 3 digits?",
+        "category": "Commonsense - Logical Reasoning",
         "icon": "🚗"
     },
     {
-        "question": "An exam has 40 questions. You answer 32 correctly. What’s your score percentage?",
-        "category": "Math - Percentage",
-        "icon": "📝"
+        "question": "A puzzle has 5 switches, each either on or off. Flipping a switch changes its state and its neighbors’. How many flips are needed to turn all switches on, starting from all off?",
+        "category": "Commonsense - Logic Puzzle",
+        "icon": "🔧"
+    },
+    {
+        "question": "If a recipe for 6 servings requires 2 cups of flour and you have 5 cups of flour, how many full servings can you make, and how much flour is left?",
+        "category": "Commonsense - Arithmetic Reasoning",
+        "icon": "🥐"
     }
 ]
 
