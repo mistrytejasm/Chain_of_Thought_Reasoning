@@ -19,7 +19,7 @@ os.environ["OPENAI_API_KEY"] = groq_api_key
 os.environ["OPENAI_API_BASE"] = "https://api.groq.com/openai/v1"
 
 # LangChain setup
-llm = ChatOpenAI(model="gemma2-9b-it", temperature=0.3)
+llm = ChatOpenAI(model="gemma2-9b-it", temperature=0.0)
 
 # Enhanced Chain of Thought prompt with clearer structure
 cot_prompt = PromptTemplate(
